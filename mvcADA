@@ -1,0 +1,82 @@
+DROP DATABASE IF EXISTS mvcADA;
+CREATE DATABASE mvcADA;
+USE mvcADA;
+
+-- 1. Tabla USUARIO 
+CREATE TABLE USUARIO (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_usuario VARCHAR(30) NOT NULL,
+    email VARCHAR(30) NOT NULL UNIQUE,
+    password VARCHAR(20) NOT NULL
+);
+
+-- 2. Tabla RUTA 
+CREATE TABLE RUTA (
+    id_ruta INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_ruta VARCHAR(50) NOT NULL,
+    descripcion_ruta TEXT,
+    ubicacion VARCHAR(30),
+    dificultad VARCHAR(10), -- Ej: "Fácil", "Media", "Difícil"
+    tipo_actividad VARCHAR(20), -- Ej: "Senderismo", "Bici"
+    longitud DECIMAL(10, 2), -- Para guardar km con decimales
+    fecha_completado DATETIME DEFAULT CURRENT_TIMESTAMP, -- Fecha de creación
+    id_creador INT NOT NULL,
+    FOREIGN KEY (id_creador) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);
+
+-- 3. Tabla LISTA 
+CREATE TABLE LISTA (
+    id_lista INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_lista VARCHAR(30) NOT NULL,
+    contenido TEXT, -- Rutas que albergan las listas
+    id_usuario INT NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
+);
+
+-- 4. Tabla VALORACION (Relación N:M "valora")
+-- Clave Primaria Compuesta (Usuario + Ruta) para evitar duplicados
+CREATE TABLE usuario_valora_ruta (
+    id_usuario INT,
+    id_ruta INT,
+    fecha_valoracion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    puntuacion INT NOT NULL CHECK (puntuacion BETWEEN 1 AND 5),
+    comentario TEXT, -- Opcional
+    PRIMARY KEY (id_usuario, id_ruta, fecha_valoracion),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_ruta) REFERENCES RUTA(id_ruta) ON DELETE CASCADE
+);
+-- 5. Tabla COMENTARIO (Relación N:M "comenta")
+-- Tabla intermedia para poder comentar las rutas sin tener que valorar
+CREATE TABLE usuario_comenta_ruta (
+    id_usuario INT,
+    id_ruta INT,
+    fecha_comentario DATETIME DEFAULT CURRENT_TIMESTAMP,
+    contenido VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id_usuario, id_ruta, fecha_comentario),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_ruta) REFERENCES RUTA(id_ruta) ON DELETE CASCADE
+);
+
+-- 6. Tabla LISTA_CONTIENE_RUTA (Relación N:M "contiene")
+-- Tabla intermedia para guardar qué rutas hay en qué lista
+CREATE TABLE lista_contiene_ruta (
+    id_lista INT,
+    id_ruta INT,
+    PRIMARY KEY (id_lista, id_ruta),
+    FOREIGN KEY (id_lista) REFERENCES LISTA(id_lista) ON DELETE CASCADE,
+    FOREIGN KEY (id_ruta) REFERENCES RUTA(id_ruta) ON DELETE CASCADE
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+

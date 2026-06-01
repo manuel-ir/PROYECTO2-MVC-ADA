@@ -32,7 +32,16 @@ CREATE TABLE LISTA (
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
 );
 
--- 4. Tabla VALORACION 
+-- 4. Tabla RUTA_LISTA (relacion entre RUTA y LISTA)
+CREATE TABLE RUTA_LISTA (
+    id_lista INT NOT NULL,
+    id_ruta  INT NOT NULL,
+    PRIMARY KEY (id_lista, id_ruta),
+    FOREIGN KEY (id_lista) REFERENCES LISTA(id_lista) ON DELETE CASCADE,
+    FOREIGN KEY (id_ruta)  REFERENCES RUTA(id_ruta)   ON DELETE CASCADE
+);
+
+-- 5. Tabla VALORACION
 CREATE TABLE VALORACION (
     id_usuario INT,
     id_ruta INT,

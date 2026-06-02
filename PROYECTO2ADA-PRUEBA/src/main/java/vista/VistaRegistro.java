@@ -219,6 +219,14 @@ public class VistaRegistro extends javax.swing.JFrame {
         });
     }
 
+    // getters para el controlador
+    public String getNombre()      { return txtNombre.getText(); }
+    public String getEmail()       { return txtEmail.getText(); }
+    public String getPass()        { return new String(txtPassword.getPassword()); }
+    public String getPassConfirm() { return new String(txtConfirmar.getPassword()); }
+    public javax.swing.JButton getBtnRegistrar() { return btnRegistrar; }
+    public void mostrarMensaje(String msg) { javax.swing.JOptionPane.showMessageDialog(this, msg); }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelDerecho;
     private javax.swing.JButton btnRegistrar;

@@ -41,7 +41,18 @@ CREATE TABLE RUTA_LISTA (
     FOREIGN KEY (id_ruta)  REFERENCES RUTA(id_ruta)   ON DELETE CASCADE
 );
 
--- 5. Tabla VALORACION
+-- 5. Tabla COMENTARIO (relacion comenta entre USUARIO y RUTA)
+CREATE TABLE COMENTARIO (
+    id_usuario       INT NOT NULL,
+    id_ruta          INT NOT NULL,
+    fecha_comentario DATETIME DEFAULT CURRENT_TIMESTAMP,
+    contenido        TEXT NOT NULL,
+    PRIMARY KEY (id_usuario, id_ruta, fecha_comentario),
+    FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_ruta)    REFERENCES RUTA(id_ruta)       ON DELETE CASCADE
+);
+
+-- 6. Tabla VALORACION
 CREATE TABLE VALORACION (
     id_usuario INT,
     id_ruta INT,

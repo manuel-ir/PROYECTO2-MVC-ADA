@@ -38,12 +38,19 @@ public class VistaRuta extends javax.swing.JFrame {
         lblValorLongitud = new javax.swing.JLabel();
         lblNombreRuta = new javax.swing.JLabel();
         btnValorar = new javax.swing.JButton();
-        btnGuaardarEnLista = new javax.swing.JButton();
+        btnGuardarEnLista = new javax.swing.JButton();
         btnCerrar = new javax.swing.JButton();
         lblDificultad = new javax.swing.JLabel();
-        JScrollPane = new javax.swing.JScrollPane();
+        scrollDescripcion = new javax.swing.JScrollPane();
         areaDescripcion = new javax.swing.JTextArea();
         lblAutor = new javax.swing.JLabel();
+        lblDescripcion = new javax.swing.JLabel();
+        scrollComentarios = new javax.swing.JScrollPane();
+        listComentarios = new javax.swing.JList<>();
+        txtNuevoComentario = new javax.swing.JTextField();
+        lblNuevoComentario = new javax.swing.JLabel();
+        lblComentarios = new javax.swing.JLabel();
+        btnComentar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -141,15 +148,15 @@ public class VistaRuta extends javax.swing.JFrame {
         getContentPane().add(lblNombreRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 260, 40));
 
         btnValorar.setText("Valorar");
-        getContentPane().add(btnValorar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 370, 90, 30));
+        getContentPane().add(btnValorar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 610, 90, 30));
 
-        btnGuaardarEnLista.setText("Guardar");
-        getContentPane().add(btnGuaardarEnLista, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 370, 100, 30));
+        btnGuardarEnLista.setText("Guardar");
+        getContentPane().add(btnGuardarEnLista, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 610, 100, 30));
 
         btnCerrar.setBackground(new java.awt.Color(45, 80, 22));
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("Cerrar");
-        getContentPane().add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 370, 90, 30));
+        getContentPane().add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 610, 90, 30));
 
         lblDificultad.setText("Dificultad");
         getContentPane().add(lblDificultad, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 120, 120, 40));
@@ -159,12 +166,36 @@ public class VistaRuta extends javax.swing.JFrame {
         areaDescripcion.setLineWrap(true);
         areaDescripcion.setRows(5);
         areaDescripcion.setWrapStyleWord(true);
-        JScrollPane.setViewportView(areaDescripcion);
+        scrollDescripcion.setViewportView(areaDescripcion);
 
-        getContentPane().add(JScrollPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 450, -1));
+        getContentPane().add(scrollDescripcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 300, 450, -1));
 
         lblAutor.setText("Por: ");
         getContentPane().add(lblAutor, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, -1, -1));
+
+        lblDescripcion.setText("Descripción");
+        getContentPane().add(lblDescripcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, -1, -1));
+
+        listComentarios.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        scrollComentarios.setViewportView(listComentarios);
+
+        getContentPane().add(scrollComentarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 490, 450, 110));
+        getContentPane().add(txtNuevoComentario, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 420, 450, -1));
+
+        lblNuevoComentario.setText("Nuevo comentario");
+        getContentPane().add(lblNuevoComentario, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 400, -1, -1));
+
+        lblComentarios.setText("Comentarios");
+        getContentPane().add(lblComentarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 460, -1, -1));
+
+        btnComentar.setBackground(new java.awt.Color(45, 80, 22));
+        btnComentar.setForeground(new java.awt.Color(255, 255, 255));
+        btnComentar.setText("Comentar");
+        getContentPane().add(btnComentar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 450, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -205,23 +236,30 @@ public class VistaRuta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane JScrollPane;
     private javax.swing.JTextArea areaDescripcion;
     private javax.swing.JButton btnCerrar;
-    private javax.swing.JButton btnGuaardarEnLista;
+    private javax.swing.JButton btnComentar;
+    private javax.swing.JButton btnGuardarEnLista;
     private javax.swing.JButton btnValorar;
     private javax.swing.JLabel lblAutor;
+    private javax.swing.JLabel lblComentarios;
+    private javax.swing.JLabel lblDescripcion;
     private javax.swing.JLabel lblDificultad;
     private javax.swing.JLabel lblFotoRuta;
     private javax.swing.JLabel lblLongitud;
     private javax.swing.JLabel lblNombreRuta;
+    private javax.swing.JLabel lblNuevoComentario;
     private javax.swing.JLabel lblUbicacion;
     private javax.swing.JLabel lblValorLongitud;
     private javax.swing.JLabel lblValorUbicacion;
     private javax.swing.JLabel lblValorValoracion;
     private javax.swing.JLabel lblValoracion;
+    private javax.swing.JList<String> listComentarios;
     private javax.swing.JPanel panelLongitud;
     private javax.swing.JPanel panelUbicacion;
     private javax.swing.JPanel panelValoracion;
+    private javax.swing.JScrollPane scrollComentarios;
+    private javax.swing.JScrollPane scrollDescripcion;
+    private javax.swing.JTextField txtNuevoComentario;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,6 +2,7 @@ package modelo;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class GestorBD {
@@ -23,5 +24,21 @@ public class GestorBD {
 
     public Connection getCon() {
         return con;
+    }
+
+    // inserta un nuevo usuario en la BD
+    public boolean registrarUsuario(String nombre, String email, String password) {
+        String sql = "INSERT INTO USUARIO (nombre_usuario, email, password) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setString(2, email);
+            ps.setString(3, password);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al registrar usuario: " + e.getMessage());
+            return false;
+        }
     }
 }

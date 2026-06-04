@@ -54,7 +54,28 @@ public class ControladorRuta {
     }
 
     private void valorar() {
-        // se implementa en funcionalidadValoraciones
+        Object[] ruta = modelo.obtenerRuta(idRuta);
+        if (ruta != null && (int) ruta[6] == idUsuario) {
+            vista.mostrarMensaje("No puedes valorar tu propia ruta.");
+            return;
+        }
+
+        String[] opciones = {"1", "2", "3", "4", "5"};
+        String puntuacionStr = (String) javax.swing.JOptionPane.showInputDialog(
+            vista, "Puntuacion (1-5):", "Valorar ruta",
+            javax.swing.JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[4]);
+        if (puntuacionStr == null) return;
+
+        String comentario = javax.swing.JOptionPane.showInputDialog(vista, "Comentario (opcional):");
+        if (comentario == null) return;
+
+        boolean ok = modelo.insertarValoracion(idUsuario, idRuta, Integer.parseInt(puntuacionStr), comentario);
+        if (ok) {
+            vista.setValoracion(modelo.obtenerValoracionMedia(idRuta));
+            vista.mostrarMensaje("Valoracion guardada.");
+        } else {
+            vista.mostrarMensaje("Ya has valorado esta ruta o ha ocurrido un error.");
+        }
     }
 
     private void guardarEnLista() {

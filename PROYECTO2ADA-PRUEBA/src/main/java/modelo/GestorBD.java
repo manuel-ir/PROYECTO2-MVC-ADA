@@ -48,6 +48,23 @@ public class GestorBD {
         return -1;
     }
 
+    // inserta una valoracion en la BD
+    public boolean insertarValoracion(int idUsuario, int idRuta, int puntuacion, String comentario) {
+        String sql = "INSERT INTO VALORACION (id_usuario, id_ruta, puntuacion, comentario) VALUES (?, ?, ?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idRuta);
+            ps.setInt(3, puntuacion);
+            ps.setString(4, comentario.isEmpty() ? null : comentario);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al insertar valoracion: " + e.getMessage());
+            return false;
+        }
+    }
+
     // carga los nombres de las listas del usuario
     public DefaultListModel<String> cargarListasModel(int idUsuario) {
         DefaultListModel<String> modelo = new DefaultListModel<>();

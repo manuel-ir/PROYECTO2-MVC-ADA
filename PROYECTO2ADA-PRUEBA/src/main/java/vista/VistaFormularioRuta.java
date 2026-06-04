@@ -71,7 +71,7 @@ public class VistaFormularioRuta extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
         getContentPane().add(txtUbicacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, 220, 30));
 
-        comboDificultad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fácil", "Media", "Dificil" }));
+        comboDificultad.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Fácil", "Media", "Difícil" }));
         comboDificultad.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboDificultadActionPerformed(evt);
@@ -104,7 +104,7 @@ public class VistaFormularioRuta extends javax.swing.JFrame {
         btnCancelar.setText("Cancelar");
         getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 380, -1, -1));
 
-        btnGuardar.setText("Cuardar");
+        btnGuardar.setText("Guardar");
         getContentPane().add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 380, -1, -1));
 
         pack();
@@ -158,4 +158,4 @@ public class VistaFormularioRuta extends javax.swing.JFrame {
     private javax.swing.JTextField txtNombreRuta;
     private javax.swing.JTextField txtUbicacion;
     // End of variables declaration//GEN-END:variables
-}
+}

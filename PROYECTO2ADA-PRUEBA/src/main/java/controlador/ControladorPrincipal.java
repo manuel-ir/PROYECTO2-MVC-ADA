@@ -3,6 +3,7 @@ package controlador;
 import java.util.List;
 import modelo.GestorBD;
 import vista.VistaFormularioRuta;
+import vista.VistaLista;
 import vista.VistaLogin;
 import vista.VistaPaginaPrincipal;
 import vista.VistaRuta;
@@ -32,6 +33,7 @@ public class ControladorPrincipal {
         vista.getBtnVerRuta().addActionListener(e -> verRuta());
         vista.getBtnEditarRuta().addActionListener(e -> editarRuta());
         vista.getBtnBorrarRuta().addActionListener(e -> borrarRuta());
+        vista.getBtnMisListas().addActionListener(e -> abrirMisListas());
         vista.getBtnCerrarSesion().addActionListener(e -> cerrarSesion());
     }
 
@@ -93,6 +95,12 @@ public class ControladorPrincipal {
             modelo.borrarRuta(idsRutas.get(fila)[0]);
             cargarTabla();
         }
+    }
+
+    private void abrirMisListas() {
+        VistaLista vistaLista = new VistaLista();
+        new ControladorLista(vistaLista, modelo, idUsuario);
+        vistaLista.setVisible(true);
     }
 
     private void cerrarSesion() {

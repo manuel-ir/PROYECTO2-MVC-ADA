@@ -48,6 +48,132 @@ public class GestorBD {
         return -1;
     }
 
+    // carga los nombres de las listas del usuario
+    public DefaultListModel<String> cargarListasModel(int idUsuario) {
+        DefaultListModel<String> modelo = new DefaultListModel<>();
+        String sql = "SELECT nombre_lista FROM LISTA WHERE id_usuario = ? ORDER BY nombre_lista";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) modelo.addElement(rs.getString("nombre_lista"));
+        } catch (SQLException e) {
+            System.err.println("Error al cargar listas: " + e.getMessage());
+        }
+        return modelo;
+    }
+
+    // devuelve los IDs de las listas en el mismo orden que cargarListasModel
+    public List<Integer> cargarIdsListas(int idUsuario) {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT id_lista FROM LISTA WHERE id_usuario = ? ORDER BY nombre_lista";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) ids.add(rs.getInt("id_lista"));
+        } catch (SQLException e) {
+            System.err.println("Error al cargar ids listas: " + e.getMessage());
+        }
+        return ids;
+    }
+
+    // carga las rutas de una lista como texto
+    public DefaultListModel<String> cargarRutasEnLista(int idLista) {
+        DefaultListModel<String> modelo = new DefaultListModel<>();
+        String sql = "SELECT r.nombre_ruta, r.ubicacion, r.dificultad " +
+                     "FROM RUTA r JOIN RUTA_LISTA rl ON r.id_ruta = rl.id_ruta " +
+                     "WHERE rl.id_lista = ? ORDER BY r.nombre_ruta";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idLista);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                modelo.addElement(rs.getString("nombre_ruta") + " - " +
+                                  rs.getString("dificultad") + " - " +
+                                  rs.getString("ubicacion"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al cargar rutas de lista: " + e.getMessage());
+        }
+        return modelo;
+    }
+
+    // devuelve los IDs de las rutas de una lista en el mismo orden que cargarRutasEnLista
+    public List<Integer> cargarIdsRutasEnLista(int idLista) {
+        List<Integer> ids = new ArrayList<>();
+        String sql = "SELECT r.id_ruta FROM RUTA r JOIN RUTA_LISTA rl ON r.id_ruta = rl.id_ruta " +
+                     "WHERE rl.id_lista = ? ORDER BY r.nombre_ruta";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idLista);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) ids.add(rs.getInt("id_ruta"));
+        } catch (SQLException e) {
+            System.err.println("Error al cargar ids rutas lista: " + e.getMessage());
+        }
+        return ids;
+    }
+
+    // crea una nueva lista
+    public boolean crearLista(String nombre, int idUsuario) {
+        String sql = "INSERT INTO LISTA (nombre_lista, id_usuario) VALUES (?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setInt(2, idUsuario);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al crear lista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // elimina una lista
+    public boolean eliminarLista(int idLista) {
+        String sql = "DELETE FROM LISTA WHERE id_lista = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idLista);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar lista: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // quita una ruta de una lista
+    public boolean quitarRutaDeLista(int idLista, int idRuta) {
+        String sql = "DELETE FROM RUTA_LISTA WHERE id_lista = ? AND id_ruta = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idLista);
+            ps.setInt(2, idRuta);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al quitar ruta: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // agrega una ruta a una lista
+    public boolean agregarRutaALista(int idLista, int idRuta) {
+        String sql = "INSERT INTO RUTA_LISTA (id_lista, id_ruta) VALUES (?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idLista);
+            ps.setInt(2, idRuta);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al agregar ruta a lista: " + e.getMessage());
+            return false;
+        }
+    }
+
     // devuelve el nombre de usuario a partir de su id
     public String getNombreUsuario(int idUsuario) {
         String sql = "SELECT nombre_usuario FROM USUARIO WHERE id_usuario = ?";

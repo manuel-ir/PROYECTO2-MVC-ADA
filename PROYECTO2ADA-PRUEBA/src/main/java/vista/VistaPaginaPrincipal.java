@@ -26,6 +26,7 @@ public class VistaPaginaPrincipal extends javax.swing.JFrame {
         btnVerRuta = new javax.swing.JButton();
         btnEditarRuta = new javax.swing.JButton();
         btnBorrarRuta = new javax.swing.JButton();
+        btnMisListas = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 550));
@@ -120,18 +121,33 @@ public class VistaPaginaPrincipal extends javax.swing.JFrame {
         btnBorrarRuta.setText("Borrar");
         toolBar.add(btnBorrarRuta);
 
+        btnMisListas.setText("Mis listas");
+        btnMisListas.setFocusable(false);
+        btnMisListas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnMisListas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnMisListas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMisListasActionPerformed(evt);
+            }
+        });
+        toolBar.add(btnMisListas);
+
         getContentPane().add(toolBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, 740, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnMisListasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMisListasActionPerformed
+    }//GEN-LAST:event_btnMisListasActionPerformed
+
     // getters para el controlador
-    public javax.swing.JTable getTablaRutas()       { return tablaRutas; }
-    public javax.swing.JButton getBtnNuevaRuta()    { return btnNuevaRuta; }
-    public javax.swing.JButton getBtnVerRuta()      { return btnVerRuta; }
-    public javax.swing.JButton getBtnEditarRuta()   { return btnEditarRuta; }
-    public javax.swing.JButton getBtnBorrarRuta()   { return btnBorrarRuta; }
-    public javax.swing.JButton getBtnCerrarSesion() { return btnCerrarSesion; }
+    public javax.swing.JTable getTablaRutas()            { return tablaRutas; }
+    public javax.swing.JButton getBtnNuevaRuta()         { return btnNuevaRuta; }
+    public javax.swing.JButton getBtnVerRuta()           { return btnVerRuta; }
+    public javax.swing.JButton getBtnEditarRuta()        { return btnEditarRuta; }
+    public javax.swing.JButton getBtnBorrarRuta()        { return btnBorrarRuta; }
+    public javax.swing.JButton getBtnCerrarSesion()      { return btnCerrarSesion; }
+    public javax.swing.JButton getBtnMisListas()         { return btnMisListas; }
     public void setNombreUsuario(String nombre) { lblBienvenida.setText("Hola, " + nombre); }
     public void mostrarMensaje(String msg) { javax.swing.JOptionPane.showMessageDialog(this, msg); }
 
@@ -139,6 +155,7 @@ public class VistaPaginaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnBorrarRuta;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnEditarRuta;
+    private javax.swing.JToggleButton btnMisListas;
     private javax.swing.JButton btnNuevaRuta;
     private javax.swing.JButton btnVerRuta;
     private javax.swing.JLabel lblBienvenida;

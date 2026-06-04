@@ -58,6 +58,23 @@ public class ControladorRuta {
     }
 
     private void guardarEnLista() {
-        // se implementa en funcionalidadListas
+        java.util.List<Integer> ids = modelo.cargarIdsListas(idUsuario);
+        javax.swing.DefaultListModel<String> nombresModel = modelo.cargarListasModel(idUsuario);
+        if (ids.isEmpty()) {
+            vista.mostrarMensaje("No tienes ninguna lista. Crea una desde Mis Listas.");
+            return;
+        }
+        String[] opciones = new String[nombresModel.size()];
+        for (int i = 0; i < nombresModel.size(); i++) opciones[i] = nombresModel.get(i);
+
+        String elegida = (String) javax.swing.JOptionPane.showInputDialog(
+            vista, "Selecciona una lista:", "Guardar en lista",
+            javax.swing.JOptionPane.PLAIN_MESSAGE, null, opciones, opciones[0]);
+
+        if (elegida != null) {
+            int idLista = ids.get(java.util.Arrays.asList(opciones).indexOf(elegida));
+            boolean ok = modelo.agregarRutaALista(idLista, idRuta);
+            vista.mostrarMensaje(ok ? "Ruta guardada en la lista." : "La ruta ya estaba en esa lista.");
+        }
     }
 }

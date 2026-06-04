@@ -107,6 +107,143 @@ public class GestorBD {
         return ids;
     }
 
+    // devuelve los datos de una ruta: [nombre, desc, ubic, dif, tipo, longitud, id_creador]
+    public Object[] obtenerRuta(int idRuta) {
+        String sql = "SELECT nombre_ruta, descripcion_ruta, ubicacion, dificultad, " +
+                     "tipo_actividad, longitud, id_creador FROM RUTA WHERE id_ruta = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idRuta);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Object[]{
+                    rs.getString("nombre_ruta"),
+                    rs.getString("descripcion_ruta"),
+                    rs.getString("ubicacion"),
+                    rs.getString("dificultad"),
+                    rs.getString("tipo_actividad"),
+                    rs.getString("longitud"),
+                    rs.getInt("id_creador")
+                };
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener ruta: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // devuelve la valoracion media de una ruta como texto, o "-" si no tiene
+    public String obtenerValoracionMedia(int idRuta) {
+        String sql = "SELECT ROUND(AVG(puntuacion), 1) AS media FROM VALORACION WHERE id_ruta = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idRuta);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getObject("media") != null) {
+                return String.valueOf(rs.getDouble("media"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al obtener valoracion: " + e.getMessage());
+        }
+        return "-";
+    }
+
+    // crea una nueva ruta
+    public boolean crearRuta(String nombre, String desc, String ubic, String dif,
+                              String tipo, double longitud, int idCreador) {
+        String sql = "INSERT INTO RUTA (nombre_ruta, descripcion_ruta, ubicacion, dificultad, " +
+                     "tipo_actividad, longitud, id_creador) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setString(2, desc);
+            ps.setString(3, ubic);
+            ps.setString(4, dif);
+            ps.setString(5, tipo);
+            ps.setDouble(6, longitud);
+            ps.setInt(7, idCreador);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al crear ruta: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // edita una ruta existente
+    public boolean editarRuta(int idRuta, String nombre, String desc, String ubic,
+                               String dif, String tipo, double longitud) {
+        String sql = "UPDATE RUTA SET nombre_ruta=?, descripcion_ruta=?, ubicacion=?, " +
+                     "dificultad=?, tipo_actividad=?, longitud=? WHERE id_ruta=?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, nombre);
+            ps.setString(2, desc);
+            ps.setString(3, ubic);
+            ps.setString(4, dif);
+            ps.setString(5, tipo);
+            ps.setDouble(6, longitud);
+            ps.setInt(7, idRuta);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al editar ruta: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // elimina una ruta por id
+    public boolean borrarRuta(int idRuta) {
+        String sql = "DELETE FROM RUTA WHERE id_ruta = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idRuta);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al borrar ruta: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // carga los comentarios de una ruta para mostrarlos en la lista
+    public javax.swing.DefaultListModel<String> cargarComentarios(int idRuta) {
+        javax.swing.DefaultListModel<String> listModel = new javax.swing.DefaultListModel<>();
+        String sql = "SELECT u.nombre_usuario, c.fecha_comentario, c.contenido " +
+                     "FROM COMENTARIO c JOIN USUARIO u ON c.id_usuario = u.id_usuario " +
+                     "WHERE c.id_ruta = ? ORDER BY c.fecha_comentario DESC";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idRuta);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String entrada = rs.getString("nombre_usuario") + " - " +
+                                 rs.getString("fecha_comentario").substring(0, 10) + ": " +
+                                 rs.getString("contenido");
+                listModel.addElement(entrada);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al cargar comentarios: " + e.getMessage());
+        }
+        return listModel;
+    }
+
+    // inserta un comentario en la BD
+    public boolean insertarComentario(int idUsuario, int idRuta, String contenido) {
+        String sql = "INSERT INTO COMENTARIO (id_usuario, id_ruta, contenido) VALUES (?, ?, ?)";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idRuta);
+            ps.setString(3, contenido);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error al insertar comentario: " + e.getMessage());
+            return false;
+        }
+    }
+
     // inserta un nuevo usuario en la BD
     public boolean registrarUsuario(String nombre, String email, String password) {
         String sql = "INSERT INTO USUARIO (nombre_usuario, email, password) VALUES (?, ?, ?)";

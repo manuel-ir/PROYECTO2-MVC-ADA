@@ -2,7 +2,7 @@
 
 ## Descripción general
 
-Aplicación de escritorio en Java Swing similar a Wikiloc pero muy simplificada. Permite a los usuarios crear, visualizar, modificar y borrar rutas de senderismo, guardarlas en listas personales y añadir valoraciones/comentarios.
+Aplicación de escritorio en Java Swing similar a Wikiloc pero muy simplificada. Permite a los usuarios crear, visualizar, modificar y borrar rutas de senderismo, guardarlas en listas personales y añadir valoraciones y comentarios.
 
 **Nombre de la app:** TrailMate  
 **Asignatura:** Acceso a Datos (2º DAM)  
@@ -12,21 +12,58 @@ Aplicación de escritorio en Java Swing similar a Wikiloc pero muy simplificada.
 
 ## Stack técnico
 
-- **Lenguaje:** Java (Maven, Java 22)
+- **Lenguaje:** Java (Maven, Java 23)
 - **Interfaz:** Java Swing con AbsoluteLayout (librería NetBeans)
 - **BD:** MySQL — base de datos `mvcADA`, usuario `root`, contraseña `1234`
-- **Acceso a datos:** JDBC puro (sin Hibernate)
-- **IDE:** NetBeans
+- **Acceso a datos:** JDBC puro (PreparedStatement, CallableStatement, transacciones)
+- **IDE:** NetBeans 23
 - **Control de versiones:** Git + GitHub
 
 ---
 
 ## Reglas importantes del proyecto
 
-1. **MVC estricto:** las vistas no pueden tener lógica. Solo exponen getters/setters y referencias a botones. Toda la lógica va en los controladores.
-2. **Sin rastro de IA en GitHub:** comentarios en español y naturales, commits en español casual, sin inglés mezclado salvo términos técnicos, sin archivos de configuración extraños.
-3. **Estilo de código:** nivel estudiante de 2º DAM. Comentarios cortos tipo `// pendiente` o `// carga datos de la BD`.
-4. **Commits:** mensajes en español imperativo casual. Ejemplo: `"Añado controlador de registro"`, no `"feat: add registration controller"`.
+1. **MVC estricto:** las vistas solo exponen getters/setters y referencias a botones. Toda la lógica va en los controladores.
+2. **Sin rastro de IA en GitHub:** comentarios en español y naturales, commits en español casual, sin inglés mezclado salvo términos técnicos.
+3. **Estilo de código:** nivel estudiante de 2º DAM. Comentarios cortos y descriptivos.
+4. **Commits:** mensajes en español casual. Sin caracteres especiales en comentarios de código.
+5. **Sin caracteres especiales** (—, …, etc.) en comentarios Java.
+
+---
+
+## Flujo Git establecido
+
+Para evitar problemas con NetBeans al cambiar de rama, el flujo es:
+
+1. Trabajar siempre en la rama `developer` local
+2. Hacer commit en `developer` local
+3. Subir a la rama de funcionalidad sin cambiar de rama:
+   ```bash
+   git push origin HEAD:funcionalidadXXX
+   ```
+4. Abrir PR en GitHub: `funcionalidadXXX` → `developer`
+5. Mergear PR y hacer `git pull origin developer`
+
+Para sincronizar una rama de funcionalidad con el estado actual de developer antes de empezar:
+```bash
+git push origin origin/developer:refs/heads/funcionalidadXXX --force
+```
+
+---
+
+## Estado actual de las ramas
+
+```
+main              (estable)
+developer         (rama de trabajo, contiene todo lo implementado)
+  vistas                      mergeada via PR #1
+  funcionalidadRegistro       mergeada via PR #2
+  funcionalidadPantallaPrincipal  mergeada via PR #3
+  funcionalidadLogin          mergeada via PR #4
+  funcionalidadPantallaRuta   en developer (sin PR formal)
+  funcionalidadListas         push realizado, PR pendiente
+  funcionalidadValoraciones   push realizado, PR pendiente
+```
 
 ---
 
@@ -35,10 +72,9 @@ Aplicación de escritorio en Java Swing similar a Wikiloc pero muy simplificada.
 | Uso | Color |
 |---|---|
 | Panel de marca / headers | `#2D5016` (verde forestal) |
-| Subtítulo app | `#9FBF80` |
+| Subtítulo / bienvenida | `#9FBF80` |
 | Texto blanco sobre verde | `#FFFFFF` |
-| Botón borrar | `#A32D2D` (foreground) |
-| Fondo formularios | blanco por defecto de Swing |
+| Botón borrar (foreground) | `#A32D2D` |
 
 ---
 
@@ -49,24 +85,35 @@ Aplicación de escritorio en Java Swing similar a Wikiloc pero muy simplificada.
 ### Tablas
 
 ```
-USUARIO (id_usuario PK, nombre_usuario UNIQUE, email UNIQUE, password)
-RUTA (id_ruta PK, nombre_ruta, descripcion_ruta, ubicacion, dificultad, tipo_actividad, longitud, fecha_creacion DEFAULT CURRENT_DATE, id_creador FK→USUARIO)
-LISTA (id_lista PK, nombre_lista, id_usuario FK→USUARIO)
-RUTA_LISTA (id_lista FK, id_ruta FK) — PK compuesta, tabla de unión M:N
-VALORACION (id_usuario FK, id_ruta FK, fecha_valoracion DATETIME DEFAULT NOW, puntuacion CHECK 1-5, comentario) — PK compuesta (id_usuario, id_ruta, fecha_valoracion)
+USUARIO       (id_usuario PK AI, nombre_usuario UNIQUE, email UNIQUE, password)
+RUTA          (id_ruta PK AI, nombre_ruta, descripcion_ruta, ubicacion, dificultad,
+               tipo_actividad, longitud DECIMAL, fecha_creacion DEFAULT CURRENT_DATE, id_creador FK→USUARIO)
+LISTA         (id_lista PK AI, nombre_lista, id_usuario FK→USUARIO)
+RUTA_LISTA    (id_lista FK, id_ruta FK) — PK compuesta
+COMENTARIO    (id_usuario FK, id_ruta FK, fecha_comentario DATETIME DEFAULT NOW, contenido) — PK compuesta
+VALORACION    (id_usuario FK, id_ruta FK, fecha_valoracion DATETIME DEFAULT NOW,
+               puntuacion CHECK 1-5, comentario) — PK compuesta
 ```
 
 Todas las FK tienen `ON DELETE CASCADE`.
+
+### Procedimientos almacenados
+
+- `calcularMediaValoracion(IN p_id_ruta, OUT p_media)` — usado en `obtenerValoracionMedia()`
+- `borrarRutaSiEsCreador(IN p_id_ruta, IN p_id_usuario, OUT p_resultado)` — usado en `borrarRuta()`
+- `agregarRutaALista(IN p_id_lista, IN p_id_ruta, IN p_id_usuario, OUT p_resultado)` — usado en `agregarRutaALista()`
 
 ---
 
 ## Estructura del proyecto
 
 ```
-PROYECTO2ADA-PRUEBA/
+PROYECTO2ADA-PRUEBA/              (raiz del repo git)
 ├── .gitignore
-├── CONTEXTO_PROYECTO.md        ← este archivo (no sube a GitHub)
-└── PROYECTO2ADA-PRUEBA/        ← proyecto Maven
+├── CONTEXTO_PROYECTO.md          (no sube a GitHub)
+├── docs/
+│   └── documentacion.md          (documentacion del proyecto)
+└── PROYECTO2ADA-PRUEBA/          (proyecto Maven)
     ├── pom.xml
     └── src/main/java/
         ├── Main.java
@@ -75,7 +122,8 @@ PROYECTO2ADA-PRUEBA/
         │   ├── ControladorRegistro.java
         │   ├── ControladorPrincipal.java
         │   ├── ControladorRuta.java
-        │   └── ControladorAgregarRuta.java
+        │   ├── ControladorAgregarRuta.java
+        │   └── ControladorLista.java
         ├── modelo/
         │   └── GestorBD.java
         ├── vista/
@@ -86,7 +134,15 @@ PROYECTO2ADA-PRUEBA/
         │   ├── VistaFormularioRuta.java / .form
         │   └── VistaLista.java / .form
         ├── img/
-        │   ├── LogoTrailMate.png        (401x559 original)
+        │   ├── BBDD/
+        │   │   ├── ModeloER-MVC.png
+        │   │   └── ModeloRelacionalMVC.png
+        │   ├── LogoPortada/
+        │   │   └── LogoPortada.png
+        │   ├── Wireframes/
+        │   │   ├── Login.png, Registro.png, PaginaPrincipal.png
+        │   │   ├── DetallesRuta.png, Agregar-EditarRuta.png, Listas.png
+        │   ├── LogoTrailMate.png        (original)
         │   ├── LogoTrailMate130.png     (130x130 para login)
         │   └── LogoTrailMate60.png      (60x60 para header)
         └── resources/
@@ -95,217 +151,98 @@ PROYECTO2ADA-PRUEBA/
 
 ---
 
-## Estado actual de los archivos
-
-### GestorBD.java
-Solo tiene el constructor con la conexión. **Sin ningún método todavía.**
-
-```java
-// Conexión: jdbc:mysql://localhost:3306/mvcADA, root, 1234
-```
+## Estado actual de los archivos implementados
 
 ### Main.java
-Solo el método `main` vacío con comentario `// pendiente`.
+Arranca la app: crea `GestorBD`, `VistaLogin` y `ControladorLogin`.
 
-### Controladores
-Todos vacíos con comentario `// pendiente`. Ninguno implementado aún.
+### GestorBD.java — métodos implementados
+
+**Conexión:** `jdbc:mysql://localhost:3306/mvcADA`, root, 1234
+
+**Métodos:**
+- `validarLogin(email, password)` → int idUsuario (-1 si falla)
+- `registrarUsuario(nombre, email, password)` → boolean — **con transaccion**: inserta usuario + crea lista "Favoritos"
+- `getNombreUsuario(idUsuario)` → String
+- `cargarRutasTabla()` → DefaultTableModel (Nombre, Ubicacion, Dificultad, Valoracion)
+- `cargarIdsRutas()` → List<int[]> con [id_ruta, id_creador] por fila
+- `obtenerRuta(idRuta)` → Object[] [nombre, desc, ubic, dif, tipo, longitud, id_creador]
+- `obtenerValoracionMedia(idRuta)` → String — usa **CallableStatement** (`calcularMediaValoracion`)
+- `crearRuta(nombre, desc, ubic, dif, tipo, longitud, idCreador)` → boolean
+- `editarRuta(idRuta, nombre, desc, ubic, dif, tipo, longitud)` → boolean
+- `borrarRuta(idRuta, idUsuario)` → boolean — usa **CallableStatement** (`borrarRutaSiEsCreador`)
+- `cargarComentarios(idRuta)` → DefaultListModel<String>
+- `insertarComentario(idUsuario, idRuta, contenido)` → boolean
+- `insertarValoracion(idUsuario, idRuta, puntuacion, comentario)` → boolean
+- `cargarListasModel(idUsuario)` → DefaultListModel<String>
+- `cargarIdsListas(idUsuario)` → List<Integer>
+- `cargarRutasEnLista(idLista)` → DefaultListModel<String>
+- `cargarIdsRutasEnLista(idLista)` → List<Integer>
+- `crearLista(nombre, idUsuario)` → boolean
+- `eliminarLista(idLista)` → boolean
+- `quitarRutaDeLista(idLista, idRuta)` → boolean
+- `agregarRutaALista(idLista, idRuta, idUsuario)` → boolean — usa **CallableStatement** (`agregarRutaALista`)
+
+### Controladores implementados
+
+**ControladorLogin:** valida campos, llama `validarLogin()`, abre `VistaPaginaPrincipal` o muestra error. Botón registro abre `VistaRegistro`.
+
+**ControladorRegistro:** valida nombre (min 3 chars), email (lowercase, @, gmail.com), contraseña (10+ chars, may+min+num), coincidencia. Llama `registrarUsuario()`.
+
+**ControladorPrincipal:** carga tabla al abrir, activa/desactiva botones según si el usuario es creador de la fila seleccionada. Conecta: nueva ruta, ver, editar, borrar, mis listas, cerrar sesion.
+
+**ControladorRuta:** carga datos de la ruta y comentarios. Gestiona: comentar, valorar (dialogo 1-5 + comentario opcional), guardar en lista (dialogo de seleccion).
+
+**ControladorAgregarRuta:** modo nueva (idRuta=0) o edicion (idRuta>0). Valida campos obligatorios y longitud positiva. Guarda o actualiza.
+
+**ControladorLista:** carga listas del usuario. Al seleccionar lista carga sus rutas. Gestiona: nueva lista, eliminar lista (confirmacion), quitar ruta de lista.
 
 ---
 
-## Vistas — componentes relevantes por vista
+## Vistas — estado actual
 
-### VistaLogin (550x380 aprox)
-- `PanelMarca` — JPanel verde #2D5016, AbsoluteLayout
-  - `lblNombreApp` — "TrailMate", Segoe UI Bold 20, blanco
-  - `lblSubtituloApp` — "rutas de senderismo", Segoe UI Bold 20, #9FBF80
-  - `lblLogo` — ImageIcon `/img/LogoTrailMate130.png`
-- `PanelDerecho` — JPanel blanco, AbsoluteLayout
-  - `lblEmail`, `txtEmail` (JTextField)
-  - `lblPassword`, `txtPassword` (JTextField — **ojo: hay que cambiar a JPasswordField**)
-  - `btnLogin` — verde #2D5016, blanco, focusPainted false
-  - `btnRegistro` — texto "¿No tienes cuenta? Registrate.", borderPainted false
+### VistaLogin
+- `JPasswordField` (variable mal nombrada, deberia ser `txtPassword`) — cambiar en NetBeans
+- Getter password: `return new String(JPasswordField.getPassword())`
+- Logo pendiente de mostrar correctamente (`lblLogo` con `LogoTrailMate130.png`)
 
-**Getters que necesita el controlador:**
-```java
-public String getEmail() { return txtEmail.getText(); }
-public String getPassword() { return new String(txtPassword.getPassword()); }
-public JButton getBtnLogin() { return btnLogin; }
-public JButton getBtnRegistro() { return btnRegistro; }
-public void mostrarMensaje(String msg) { JOptionPane.showMessageDialog(this, msg); }
-```
+### VistaRegistro
+- Getters implementados fuera del bloque GEN
+- `txtPassword` y `txtConfirmar` son JPasswordField
 
-### VistaRegistro (710x380 aprox)
-- `panelImagen` — JPanel verde #3A5A1C, GroupLayout
-  - `lblFotoRegistro` — reserva para foto panorámica
-  - `lblSlogan` — "Únete a la comunidad"
-- `PanelDerecho` — GroupLayout
-  - `txtNombre`, `txtEmail`, `txtPassword` (JPasswordField), `txtConfirmar` (JPasswordField)
-  - `btnRegistrar` — verde, blanco
-  - `jLabel1..4` — etiquetas de campo (sin renombrar todavía)
+### VistaPaginaPrincipal
+- `btnMisListas` añadido a la toolbar (JButton)
+- Getter: `getBtnMisListas()` → JButton
+- Logo pendiente de mostrar correctamente (`lblLogo` con `LogoTrailMate60.png`)
 
-**Getters que necesita el controlador:**
-```java
-public String getNombre() { return txtNombre.getText(); }
-public String getEmail() { return txtEmail.getText(); }
-public String getPass() { return new String(txtPassword.getPassword()); }
-public String getPassConfirm() { return new String(txtConfirmar.getPassword()); }
-public JButton getBtnRegistrar() { return btnRegistrar; }
-public void mostrarMensaje(String msg) { JOptionPane.showMessageDialog(this, msg); }
-```
+### VistaRuta
+- Getters + setters implementados
+- Seccion de comentarios: `listComentarios`, `txtNuevoComentario`, `btnComentar`
+- `defaultCloseOperation` = DISPOSE_ON_CLOSE
 
-### VistaPaginaPrincipal (800x550)
-- `panelHeader` — verde #2D5016, GroupLayout interno
-  - `lblLogo` — `/img/LogoTrailMate60.png`
-  - `lblNombreApp` — "TrailMate", Segoe UI Bold 16, blanco
-  - `lblBienvenida` — "Hola, [nombre]", Segoe UI Bold 14, #9FBF80
-  - `btnCerrarSesion`
-- `toolBar` — JToolBar gris #CCCCCC
-  - `btnNuevaRuta`, `btnVerRuta`, `btnEditarRuta`, `btnBorrarRuta`
-- `scrollTabla` → `tablaRutas` (JTable) — columnas: Nombre, Ubicación, Dificultad, Valoración
-
-**Getters que necesita el controlador:**
-```java
-public JTable getTablaRutas() { return tablaRutas; }
-public JButton getBtnNuevaRuta() { return btnNuevaRuta; }
-public JButton getBtnVerRuta() { return btnVerRuta; }
-public JButton getBtnEditarRuta() { return btnEditarRuta; }
-public JButton getBtnBorrarRuta() { return btnBorrarRuta; }
-public JButton getBtnCerrarSesion() { return btnCerrarSesion; }
-public void setNombreUsuario(String nombre) { lblBienvenida.setText("Hola, " + nombre); }
-public void mostrarMensaje(String msg) { JOptionPane.showMessageDialog(this, msg); }
-```
-
-### VistaRuta (~500x420)
-- `lblFotoRuta` — reserva foto, borde negro
-- `lblNombreRuta` — Segoe UI Bold 18
-- `lblDificultad`
-- `lblAutor`
-- Tres paneles chip con dos labels cada uno:
-  - `panelLongitud` → `lblValorLongitud` (Bold 14) + `lblLongitud` ("longitud")
-  - `panelUbicacion` → `lblValorUbicacion` (Bold 14) + `lblUbicacion` ("ubicación")
-  - `panelValoracion` → `lblValorValoracion` (Bold 14) + `lblValoracion` ("valoración")
-- `JScrollPane` → `areaDescripcion` (JTextArea, editable false, lineWrap true)
-- `btnValorar`, `btnGuaardarEnLista` (**typo: doble 'a'**), `btnCerrar` (verde)
-
-**Getters que necesita el controlador:**
-```java
-public void setNombreRuta(String s) { lblNombreRuta.setText(s); }
-public void setDificultad(String s) { lblDificultad.setText(s); }
-public void setAutor(String s) { lblAutor.setText("Por: " + s); }
-public void setLongitud(String s) { lblValorLongitud.setText(s); }
-public void setUbicacion(String s) { lblValorUbicacion.setText(s); }
-public void setValoracion(String s) { lblValorValoracion.setText(s); }
-public void setDescripcion(String s) { areaDescripcion.setText(s); }
-public JButton getBtnCerrar() { return btnCerrar; }
-public JButton getBtnValorar() { return btnValorar; }
-public JButton getBtnGuardarEnLista() { return btnGuaardarEnLista; }
-```
-
-### VistaFormularioRuta (~600x420)
-- `panelHeader` — verde, GroupLayout, `lblTituloFormuulario` (**typo: doble 'u'**)
-- `jLabel1` — "NOMBRE DE LA RUTA" (sin renombrar)
-- `txtNombreRuta`, `txtUbicacion`, `txtLongitud`
-- `comboDificultad` — items: Fácil, Media, Dificil (**falta tilde en Difícil**)
-- `comboTipo` — items: Senderismo, Ciclismo, Escalada
-- `jScrollPane1` → `jTextArea1` (descripción, sin renombrar)
-- `jLabel2` — "LONGITUD (KM)"
-- `btnCancelar`, `btnGuardar` — **typo: texto "Cuardar" en vez de "Guardar"** (pendiente corregir)
-
-**Getters que necesita el controlador:**
-```java
-public String getNombreRuta() { return txtNombreRuta.getText(); }
-public String getUbicacion() { return txtUbicacion.getText(); }
-public String getDificultad() { return (String) comboDificultad.getSelectedItem(); }
-public String getTipo() { return (String) comboTipo.getSelectedItem(); }
-public String getLongitud() { return txtLongitud.getText(); }
-public String getDescripcion() { return jTextArea1.getText(); }
-public JButton getBtnGuardar() { return btnGuardar; }
-public JButton getBtnCancelar() { return btnCancelar; }
-public void setTituloFormulario(String s) { lblTituloFormuulario.setText(s); }
-public void cargarDatos(String nombre, String ubic, String dif, String tipo, String lon, String desc) { ... }
-public void mostrarMensaje(String msg) { JOptionPane.showMessageDialog(this, msg); }
-```
+### VistaFormularioRuta
+- Getters implementados, incluye `cargarDatos()` para modo edicion
+- `defaultCloseOperation` = DISPOSE_ON_CLOSE
+- Typo en variable: `lblTituloFormuulario` (doble u, generado por NetBeans)
 
 ### VistaLista
-Creada en NetBeans pero sin componentes definidos todavía. Estructura prevista:
-- Header verde con título "Mis listas" y `btnNuevaLista`
-- Panel izquierdo: `JScrollPane` con `JList` (`listaListas`) — muestra los nombres de las listas del usuario
-- Panel derecho: `JScrollPane` con `JTable` (`tablaRutasLista`) — muestra las rutas de la lista seleccionada
-- Botones: `btnEliminarLista`, `btnQuitarRuta`, `btnCerrar`
+- Dos JList: `listaRutas` (listas del usuario) y `tablaRutaLista` (rutas de la lista)
+- Getters: `getListaListas()`, `getTablaRutaLista()`, `setModeloListas()`, `setModeloRutas()`
+- `defaultCloseOperation` = DISPOSE_ON_CLOSE
 
 ---
 
-## Flujo Git
+## pom.xml — configuracion relevante
 
-```
-main (rama estable)
-  └── developer (rama de integración)
-        ├── vistas (mergeada ✓)
-        ├── funcionalidadRegistro (pendiente)
-        ├── funcionalidadLogin (pendiente)
-        ├── funcionalidadPantallaPrincipal (pendiente)
-        ├── funcionalidadPantallaRuta (pendiente)
-        ├── funcionalidadListas (pendiente)
-        └── funcionalidadValoraciones (pendiente)
-```
-
-**Flujo por funcionalidad:**
-1. `git checkout developer && git checkout -b funcionalidadXXX`
-2. Implementar código
-3. `git add . && git commit -m "mensaje en español"`
-4. `git push origin funcionalidadXXX`
-5. Abrir PR en GitHub: `funcionalidadXXX` → `developer`
-6. Mergear PR
+- `artifactId`: PROYECTO2ADA
+- `maven.compiler.release`: 22
+- `exec.mainClass`: Main
+- Build resources: incluye `src/main/java` para copiar `.png`, `.jpg`, `.gif`, `.sql` al classpath
 
 ---
 
-## Orden de implementación de funcionalidades
+## Pendiente
 
-1. **VistaRegistro + GestorBD.registrarUsuario()** → rama `funcionalidadRegistro`
-2. **VistaLogin + GestorBD.validarLogin() + Main.java** → rama `funcionalidadLogin`
-3. **VistaPaginaPrincipal + GestorBD.cargarRutasTabla()** → rama `funcionalidadPantallaPrincipal`
-4. **VistaRuta + VistaFormularioRuta + CRUD rutas** → rama `funcionalidadPantallaRuta`
-5. **VistaLista + métodos de listas** → rama `funcionalidadListas`
-6. **Valoraciones** → rama `funcionalidadValoraciones`
-
----
-
-## Pendiente antes de implementar controladores
-
-- Añadir getters/setters a todas las vistas (fuera del bloque GEN)
-- Corregir typos en vistas: "Cuardar", doble 'u' en `lblTituloFormuulario`, doble 'a' en `btnGuaardarEnLista`, tilde en "Dificil"
-- `txtPassword` en VistaLogin debería ser JPasswordField, no JTextField
-
----
-
-## Documentación pendiente (archivo .md en el repo)
-
-Secciones a completar:
-- **a. Definición del problema** — descripción de la app y wireframes (capturas de las vistas reales)
-- **b.i. Modelo ER** — imagen pendiente de adjuntar por el usuario
-- **b.ii. Modelo relacional** — imagen pendiente (captura de MySQL Workbench)
-- **d. Control de versiones** — captura de las ramas en GitHub (pendiente crear ramas primero)
-- **a. Estructura del proyecto** — árbol de paquetes y explicación MVC
-- **b. Funcionamiento básico** — flujo login → registro → pantalla principal → CRUD
-- **c. Implementación diseño de datos** — explicación de las tablas y relaciones
-
-La documentación irá en una carpeta `docs/` dentro del repo, en un archivo `documentacion.md`.
-
----
-
-## Dependencias Maven (pom.xml)
-
-```xml
-<dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <version>8.3.0</version>
-</dependency>
-<dependency>
-    <groupId>org.netbeans.external</groupId>
-    <artifactId>AbsoluteLayout</artifactId>
-    <version>RELEASE120</version>
-</dependency>
-```
-
-Java 22, empaquetado como JAR.
+- Corregir nombre de variable `JPasswordField` en VistaLogin a `txtPassword` en NetBeans
+- Resolver por que los logos no se ven en VistaLogin y VistaPaginaPrincipal
+- Subir commits pendientes al repo (valoraciones, listas, pom.xml, vistas)

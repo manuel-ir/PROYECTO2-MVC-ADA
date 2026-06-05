@@ -26,7 +26,7 @@ Los siguientes wireframes representan las pantallas de la aplicación.
 
 **Login**
 
-![Login](../PROYECTO2ADA/src/main/java/img/Wireframes/Login.png)
+![Login](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Login.png)
 
 Pantalla de inicio de sesión. El usuario introduce su email y contraseña. Si los datos son correctos accede a la página principal; si no existe cuenta, puede navegar al registro mediante el enlace inferior.
 
@@ -34,7 +34,7 @@ Pantalla de inicio de sesión. El usuario introduce su email y contraseña. Si l
 
 **Registro**
 
-![Registro](../PROYECTO2ADA/src/main/java/img/Wireframes/Registro.png)
+![Registro](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Registro.png)
 
 Formulario de creación de cuenta. El usuario introduce nombre de usuario, email, contraseña y confirmación de contraseña. Al pulsar "Crear cuenta" se validan los datos y se registra el usuario en la base de datos.
 
@@ -42,7 +42,7 @@ Formulario de creación de cuenta. El usuario introduce nombre de usuario, email
 
 **Página Principal**
 
-![Página Principal](../PROYECTO2ADA/src/main/java/img/Wireframes/PaginaPrincipal.png)
+![Página Principal](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/PaginaPrincipal.png)
 
 Vista central de la aplicación. Muestra una tabla con todas las rutas disponibles (nombre, ubicación, dificultad y valoración media). Desde aquí el usuario puede crear una nueva ruta, ver el detalle, editarla, borrarla o acceder a sus listas. También se muestra el nombre del usuario autenticado.
 
@@ -50,7 +50,7 @@ Vista central de la aplicación. Muestra una tabla con todas las rutas disponibl
 
 **Detalle de Ruta**
 
-![Detalle de Ruta](../PROYECTO2ADA/src/main/java/img/Wireframes/DetallesRuta.png)
+![Detalle de Ruta](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/DetallesRuta.png)
 
 Muestra la información completa de una ruta seleccionada: nombre, dificultad, longitud, ubicación, valoración media y descripción. Permite al usuario valorar la ruta o guardarla en una de sus listas.
 
@@ -58,7 +58,7 @@ Muestra la información completa de una ruta seleccionada: nombre, dificultad, l
 
 **Agregar / Editar Ruta**
 
-![Agregar-Editar Ruta](../PROYECTO2ADA/src/main/java/img/Wireframes/Agregar-EditarRuta.png)
+![Agregar-Editar Ruta](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Agregar-EditarRuta.png)
 
 Formulario reutilizable para crear una nueva ruta o editar una existente. Recoge nombre, ubicación, dificultad (combo), tipo de actividad (combo), longitud en km y descripción. El título del formulario cambia según la acción ("Nueva ruta" o "Editar ruta").
 
@@ -66,7 +66,7 @@ Formulario reutilizable para crear una nueva ruta o editar una existente. Recoge
 
 **Mis Listas**
 
-![Listas](../PROYECTO2ADA/src/main/java/img/Wireframes/Listas.png)
+![Listas](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Listas.png)
 
 Pantalla de gestión de listas personales. A la izquierda aparece la lista de colecciones del usuario (con el número de rutas que contiene cada una). Al seleccionar una, el panel derecho muestra las rutas que pertenecen a esa lista. Se puede crear una nueva lista, eliminar una existente o quitar una ruta de la lista.
 
@@ -76,7 +76,7 @@ Pantalla de gestión de listas personales. A la izquierda aparece la lista de co
 
 #### i. Modelo entidad-relación (ER)
 
-![Modelo ER](../PROYECTO2ADA/src/main/java/img/BBDD/ModeloER-MVC.png)
+![Modelo ER](../PROYECTO2ADA-PRUEBA/src/main/java/img/BBDD/ModeloER-MVC.png)
 
 El modelo ER refleja las siguientes entidades y relaciones:
 
@@ -105,7 +105,7 @@ El modelo ER refleja las siguientes entidades y relaciones:
 
 #### ii. Modelo relacional de la base de datos
 
-![Modelo Relacional](../PROYECTO2ADA/src/main/java/img/BBDD/ModeloRelacionalMVC.png)
+![Modelo Relacional](../PROYECTO2ADA-PRUEBA/src/main/java/img/BBDD/ModeloRelacionalMVC.png)
 
 El modelo relacional resultante contiene las siguientes tablas:
 
@@ -154,7 +154,8 @@ PROYECTO2ADA/
     │   ├── ControladorRegistro.java
     │   ├── ControladorPrincipal.java
     │   ├── ControladorRuta.java
-    │   └── ControladorAgregarRuta.java
+    │   ├── ControladorAgregarRuta.java
+    │   └── ControladorLista.java
     ├── modelo/
     │   └── GestorBD.java               ← toda la lógica de acceso a datos (JDBC)
     ├── vista/

@@ -1,0 +1,9 @@
+{
+  "markdown-pdf.displayHeaderFooter": true,
+  "markdown-pdf.headerTemplate": "<div></div>",
+  "markdown-pdf.footerTemplate": "<div style='font-size: 9px; width: 100%; text-align: center; color: #666; font-family: Arial, sans-serif;'>Proyecto MVC &nbsp;&nbsp; <span class='pageNumber'></span></div>",
+  "markdown-pdf.margin.top": "15mm",
+  "markdown-pdf.margin.bottom": "15mm",
+  "markdown-pdf.margin.right": "20mm",
+  "markdown-pdf.margin.left": "20mm"
+}

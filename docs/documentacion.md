@@ -1,4 +1,38 @@
-# Documentación del Proyecto — TrailMate
+<div style="page-break-after: always; text-align: center; padding-top: 120px;">
+
+<img src="../PROYECTO2ADA/src/main/java/img/Portada.png" width="260"/>
+
+# TrailMate
+
+**Proyecto de Acceso a Datos**
+
+---
+
+**Manuel Infantes Rodríguez**
+
+2º DAM
+
+</div>
+
+---
+
+<div style="page-break-after: always;">
+
+## Índice
+
+1. [Introducción](#1-introducción)
+   - [a. Definición del problema](#a-definición-del-problema)
+2. [Especificación de Diseño](#3-especificación-de-diseño)
+   - [a. Wireframes](#ii-wireframes-o-prototipos-de-interfaz)
+   - [b. Modelo ER](#i-modelo-entidad-relación-er)
+   - [c. Modelo relacional](#ii-modelo-relacional-de-la-base-de-datos)
+3. [Planificación y Control de versiones](#4-planificación-y-gestión-del-proyecto)
+4. [Implementación](#5-implementación)
+   - [a. Estructura del proyecto](#a-estructura-y-organización-del-proyecto)
+   - [b. Funcionamiento básico](#b-explicación-del-funcionamiento-básico-de-la-aplicación)
+   - [c. Diseño de datos](#c-implementación-del-diseño-de-datos)
+
+</div>
 
 ---
 

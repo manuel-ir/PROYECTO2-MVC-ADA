@@ -24,11 +24,12 @@ CREATE TABLE RUTA (
     FOREIGN KEY (id_creador) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
 );
 
--- 3. Tabla LISTA 
+-- 3. Tabla LISTA
 CREATE TABLE LISTA (
     id_lista INT AUTO_INCREMENT PRIMARY KEY,
     nombre_lista VARCHAR(30) NOT NULL,
     id_usuario INT NOT NULL,
+    UNIQUE (nombre_lista, id_usuario),
     FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) ON DELETE CASCADE
 );
 
@@ -98,6 +99,57 @@ BEGIN
         SET p_resultado = 1;
     ELSE
         SET p_resultado = 0;
+    END IF;
+END //
+
+-- Triggers
+
+-- Impide que un usuario valore su propia ruta y que valore más de una vez la misma
+CREATE TRIGGER before_insert_valoracion
+BEFORE INSERT ON VALORACION
+FOR EACH ROW
+BEGIN
+    DECLARE v_creador INT;
+    DECLARE v_count INT;
+    SELECT id_creador INTO v_creador FROM RUTA WHERE id_ruta = NEW.id_ruta;
+    IF v_creador = NEW.id_usuario THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No puedes valorar tu propia ruta';
+    END IF;
+    SELECT COUNT(*) INTO v_count FROM VALORACION WHERE id_usuario = NEW.id_usuario AND id_ruta = NEW.id_ruta;
+    IF v_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya has valorado esta ruta';
+    END IF;
+END //
+
+-- Comprueba que la longitud de la ruta sea positiva
+CREATE TRIGGER before_insert_ruta
+BEFORE INSERT ON RUTA
+FOR EACH ROW
+BEGIN
+    IF NEW.longitud <= 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'La longitud debe ser mayor que 0';
+    END IF;
+END //
+
+-- Impide modificar el creador de una ruta una vez creada
+CREATE TRIGGER before_update_ruta_creador
+BEFORE UPDATE ON RUTA
+FOR EACH ROW
+BEGIN
+    IF NEW.id_creador != OLD.id_creador THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'No se puede cambiar el creador de una ruta';
+    END IF;
+END //
+
+-- Mensaje descriptivo al intentar crear una lista con nombre duplicado
+CREATE TRIGGER before_insert_lista_duplicada
+BEFORE INSERT ON LISTA
+FOR EACH ROW
+BEGIN
+    DECLARE v_count INT;
+    SELECT COUNT(*) INTO v_count FROM LISTA WHERE nombre_lista = NEW.nombre_lista AND id_usuario = NEW.id_usuario;
+    IF v_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Ya tienes una lista con ese nombre';
     END IF;
 END //
 

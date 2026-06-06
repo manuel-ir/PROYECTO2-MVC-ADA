@@ -26,7 +26,7 @@ Los siguientes wireframes representan las pantallas de la aplicación.
 
 **Login**
 
-![Login](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Login.png)
+![Login](../PROYECTO2ADA/src/main/java/img/Wireframes/Login.png)
 
 Pantalla de inicio de sesión. El usuario introduce su email y contraseña. Si los datos son correctos accede a la página principal; si no existe cuenta, puede navegar al registro mediante el enlace inferior.
 
@@ -34,7 +34,7 @@ Pantalla de inicio de sesión. El usuario introduce su email y contraseña. Si l
 
 **Registro**
 
-![Registro](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Registro.png)
+![Registro](../PROYECTO2ADA/src/main/java/img/Wireframes/Registro.png)
 
 Formulario de creación de cuenta. El usuario introduce nombre de usuario, email, contraseña y confirmación de contraseña. Al pulsar "Crear cuenta" se validan los datos y se registra el usuario en la base de datos.
 
@@ -42,7 +42,7 @@ Formulario de creación de cuenta. El usuario introduce nombre de usuario, email
 
 **Página Principal**
 
-![Página Principal](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/PaginaPrincipal.png)
+![Página Principal](../PROYECTO2ADA/src/main/java/img/Wireframes/PaginaPrincipal.png)
 
 Vista central de la aplicación. Muestra una tabla con todas las rutas disponibles (nombre, ubicación, dificultad y valoración media). Desde aquí el usuario puede crear una nueva ruta, ver el detalle, editarla, borrarla o acceder a sus listas. También se muestra el nombre del usuario autenticado.
 
@@ -50,7 +50,7 @@ Vista central de la aplicación. Muestra una tabla con todas las rutas disponibl
 
 **Detalle de Ruta**
 
-![Detalle de Ruta](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/DetallesRuta.png)
+![Detalle de Ruta](../PROYECTO2ADA/src/main/java/img/Wireframes/DetallesRuta.png)
 
 Muestra la información completa de una ruta seleccionada: nombre, dificultad, longitud, ubicación, valoración media y descripción. Permite al usuario valorar la ruta o guardarla en una de sus listas.
 
@@ -58,7 +58,7 @@ Muestra la información completa de una ruta seleccionada: nombre, dificultad, l
 
 **Agregar / Editar Ruta**
 
-![Agregar-Editar Ruta](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Agregar-EditarRuta.png)
+![Agregar-Editar Ruta](../PROYECTO2ADA/src/main/java/img/Wireframes/Agregar-EditarRuta.png)
 
 Formulario reutilizable para crear una nueva ruta o editar una existente. Recoge nombre, ubicación, dificultad (combo), tipo de actividad (combo), longitud en km y descripción. El título del formulario cambia según la acción ("Nueva ruta" o "Editar ruta").
 
@@ -66,7 +66,7 @@ Formulario reutilizable para crear una nueva ruta o editar una existente. Recoge
 
 **Mis Listas**
 
-![Listas](../PROYECTO2ADA-PRUEBA/src/main/java/img/Wireframes/Listas.png)
+![Listas](../PROYECTO2ADA/src/main/java/img/Wireframes/Listas.png)
 
 Pantalla de gestión de listas personales. A la izquierda aparece la lista de colecciones del usuario (con el número de rutas que contiene cada una). Al seleccionar una, el panel derecho muestra las rutas que pertenecen a esa lista. Se puede crear una nueva lista, eliminar una existente o quitar una ruta de la lista.
 
@@ -76,7 +76,7 @@ Pantalla de gestión de listas personales. A la izquierda aparece la lista de co
 
 #### i. Modelo entidad-relación (ER)
 
-![Modelo ER](../PROYECTO2ADA-PRUEBA/src/main/java/img/BBDD/ModeloER-MVC.png)
+![Modelo ER](../PROYECTO2ADA/src/main/java/img/BBDD/ModeloER-MVC.png)
 
 El modelo ER refleja las siguientes entidades y relaciones:
 
@@ -105,7 +105,7 @@ El modelo ER refleja las siguientes entidades y relaciones:
 
 #### ii. Modelo relacional de la base de datos
 
-![Modelo Relacional](../PROYECTO2ADA-PRUEBA/src/main/java/img/BBDD/ModeloRelacionalMVC.png)
+![Modelo Relacional](../PROYECTO2ADA/src/main/java/img/BBDD/ModeloRelacionalMVC.png)
 
 El modelo relacional resultante contiene las siguientes tablas:
 
@@ -136,6 +136,8 @@ El proyecto usa Git con GitHub como repositorio remoto. Las ramas del proyecto s
 | `funcionalidadPantallaRuta` | Detalle, creación y edición de rutas |
 | `funcionalidadListas` | Gestión de listas personales del usuario |
 | `funcionalidadValoraciones` | Valoraciones y comentarios sobre rutas |
+
+![Ramas GitHub](../PROYECTO2ADA/src/main/java/img/ramas-github.png)
 
 ---
 
@@ -208,15 +210,13 @@ Además del acceso a datos básico, la base de datos incorpora las siguientes re
 
 **Triggers:**
 
-- **`before_insert_valoracion`:** impide que un usuario valore su propia ruta comprobando que `id_usuario` ≠ `id_creador`.
-- **`before_valorar_duplicado`:** impide que un usuario deje más de una valoración sobre la misma ruta.
+- **`before_insert_valoracion`:** comprueba dos cosas antes de insertar una valoración: que el usuario no sea el creador de la ruta y que no haya valorado ya esa ruta antes.
 - **`before_insert_ruta`:** comprueba que la longitud sea un valor positivo (> 0).
 - **`before_update_ruta_creador`:** impide modificar el campo `id_creador` una vez creada la ruta.
-- **`before_insert_lista_duplicada`:** lanza un mensaje de error descriptivo cuando se intenta duplicar el nombre de una lista, en lugar del error genérico de MySQL.
+- **`before_insert_lista_duplicada`:** lanza un mensaje descriptivo cuando se intenta crear una lista con un nombre que ya existe para ese usuario.
 
 **Procedimientos almacenados:**
 
 - **`calcularMediaValoracion(p_id_ruta)`:** calcula y devuelve la media de puntuaciones de una ruta.
-- **`añadirRutaALista(p_id_lista, p_id_ruta, p_id_usuario)`:** verifica que la lista pertenece al usuario antes de insertar en `RUTA_LISTA`.
+- **`agregarRutaALista(p_id_lista, p_id_ruta, p_id_usuario)`:** verifica que la lista pertenece al usuario antes de insertar en `RUTA_LISTA`.
 - **`borrarRutaSiEsCreador(p_id_ruta, p_id_usuario)`:** elimina la ruta solo si el usuario es su creador, y devuelve un código de resultado.
-- **`obtenerEstadisticasRuta(p_id_ruta)`:** devuelve en una sola llamada la media de valoraciones, el número total de valoraciones y el número de listas en las que está guardada la ruta.
